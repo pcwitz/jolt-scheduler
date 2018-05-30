@@ -18,7 +18,7 @@ const emailClient = require('../server/services/actions/email');
 /* CHANGE INTERVAL SETTINGS AS NEEDED */
 const event = {
   name: 'registeruser',
-  interval: {days: 0, hours: 0, minutes: 1, seconds: 0},
+  interval: {days: 0, hours: 0, minutes: 0, seconds: 1},
   action: emailClient.send
 };
 

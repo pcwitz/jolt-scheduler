@@ -52,7 +52,7 @@ function scheduleEvent(err, event) {
       const minutes = event.interval.minutes ? event.interval.minutes * constants.time.SECONDS_IN_MINUTE : 0;
       const seconds = event.interval.seconds ? event.interval.seconds * constants.time.MILLISECONDS_IN_SECOND : 0;
       const runTimeIntervalInSeconds = days + minutes + seconds;
-      job.schedule(event.start.setSeconds(event.start.getSeconds() + runTimeIntervalInSeconds));
+      job.schedule(event.start.getTime() + runTimeIntervalInSeconds);
     }
   }
 }
