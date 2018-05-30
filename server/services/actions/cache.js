@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports.clear = function(fireDate) {
+module.exports.reset = function(fireDate) {
   console.log(`
     clearing cache... [date: ${fireDate}]`);
 };

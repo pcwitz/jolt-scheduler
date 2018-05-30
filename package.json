@@ -7,7 +7,7 @@
     "jolt-scheduler": "run.js"
   },
   "scripts": {
-    "start": "nodemon ./bin/run.js localhost 3030",
+    "start": "nodemon ./bin/run.js localhost 3030"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-3": "^6.24.1",
     "babelify": "^8.0.0",
+    "chalk": "^2.4.1",
     "eslint": "^4.19.1",
     "eslint-plugin-react": "^7.8.2",
     "nodemon": "^1.17.5",

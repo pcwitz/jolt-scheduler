@@ -21,5 +21,6 @@ are logged in the console.
 
 ## Installation
 
-1. npm start
-2. runs on port 3030 (adjust in `bin/run.js` if necessary)
+1. npm install
+2. npm start
+3. runs on port 3030 (adjust in `bin/run.js` if necessary)
