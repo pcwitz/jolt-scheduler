@@ -1,39 +1,46 @@
 'use strict';
 
-const schedule = require('node-schedule');
-const Job = require('./job');
+// const schedule = require('node-schedule');
+// const Job = require('./job');
 const constants = require('./config/constants.json');
 
 function createRecurringRule(interval) {
 
-  var rule = new schedule.RecurrenceRule();
+  // var rule = new schedule.RecurrenceRule();
+  var seconds = 0;
   if (interval.days) {
+    seconds = seconds + interval.hours * constants.time.SECONDS_IN_DAY;
 
-    var hoursOfDay   = interval.hours/constants.time.HOURS_IN_DAY;
-    var minutesOfDay = interval.minutes/constants.time.MINUTES_IN_DAY;
-    var secondsOfDay = interval.seconds/constants.time.SECONDS_IN_DAY;
-    var daysInterval = interval.days + hoursOfDay + minutesOfDay + secondsOfDay;
-    rule.dayOfWeek = [new schedule.Range(0, 6, Math.round(daysInterval))];
+    // var hoursOfDay   = interval.hours/constants.time.HOURS_IN_DAY;
+    // var minutesOfDay = interval.minutes/constants.time.MINUTES_IN_DAY;
+    // var secondsOfDay = interval.seconds/constants.time.SECONDS_IN_DAY;
+    // var daysInterval = interval.days + hoursOfDay + minutesOfDay + secondsOfDay;
+    // rule.dayOfWeek = [new schedule.Range(0, 6, Math.round(daysInterval))];
 
-  } else if (interval.hours) {
+  } if (interval.hours) {
+    seconds = seconds + interval.hours * constants.time.SECONDS_IN_HOUR;
 
-    var minutesOfHour = interval.minutes/constants.time.MINUTES_IN_HOUR;
-    var secondsOfHour = interval.seconds/constants.time.SECONDS_IN_HOUR;
-    var hoursInterval = interval.hours + minutesOfHour + secondsOfHour;
-    rule.hour = [new schedule.Range(0, 23, Math.round(hoursInterval))];
+    // var minutesOfHour = interval.minutes/constants.time.MINUTES_IN_HOUR;
+    // var secondsOfHour = interval.seconds/constants.time.SECONDS_IN_HOUR;
+    // var hoursInterval = interval.hours + minutesOfHour + secondsOfHour;
+    // rule.hour = [new schedule.Range(0, 23, Math.round(hoursInterval))];
 
-  } else if (interval.minutes) {
+  } if (interval.minutes) {
+    seconds = seconds + interval.minutes * constants.time.SECONDS_IN_MINUTE;
 
-    var secondsOfMinute = interval.seconds/constants.time.SECONDS_IN_MINUTE;
-    var minutesInterval = interval.minutes + secondsOfMinute;
-    rule.minute = [new schedule.Range(0, 59, Math.round(minutesInterval))];
-    rule.second = 0;
-  } else {
 
-    rule.second = [new schedule.Range(0, 59, Math.round(interval.seconds))];
+    // var secondsOfMinute = interval.seconds/constants.time.SECONDS_IN_MINUTE;
+    // var minutesInterval = interval.minutes + secondsOfMinute;
+    // rule.minute = [new schedule.Range(0, 59, Math.round(minutesInterval))];
+
+  } if (interval.seconds) {
+    seconds = seconds + interval.seconds;
+
+    // rule.second = [new schedule.Range(0, 59, Math.round(interval.seconds))];
 
   }
-  return rule;
+  return seconds * constants.time.MILLISECONDS_IN_SECOND;
+  // return rule;
 }
 
 function scheduleEvent(err, event) {
@@ -41,18 +48,24 @@ function scheduleEvent(err, event) {
   if (err) {
     console.error(err);
   } else {
-    var job = Job.init(event);
-
+    // var job = Job.init(event);
+    var seconds = createRecurringRule(event.interval);
     if (event.recurring) {
-      var rule = createRecurringRule(event.interval);
-      job.schedule(rule);
+
+
+      setInterval(event.action, seconds, event.start);
+
+      // var rule = createRecurringRule(event.interval);
+      // job.schedule(rule);
     } else {
 
-      const days = event.interval.days ? event.interval.days * constants.time.SECONDS_IN_DAY : 0;
-      const minutes = event.interval.minutes ? event.interval.minutes * constants.time.SECONDS_IN_MINUTE : 0;
-      const seconds = event.interval.seconds ? event.interval.seconds * constants.time.MILLISECONDS_IN_SECOND : 0;
-      const runTimeIntervalInSeconds = days + minutes + seconds;
-      job.schedule(event.start.getTime() + runTimeIntervalInSeconds);
+      setTimeout(event.action, seconds, event.start);
+
+      // const days = event.interval.days ? event.interval.days * constants.time.SECONDS_IN_DAY : 0;
+      // const minutes = event.interval.minutes ? event.interval.minutes * constants.time.SECONDS_IN_MINUTE : 0;
+      // const seconds = event.interval.seconds ? event.interval.seconds * constants.time.MILLISECONDS_IN_SECOND : 0;
+      // const runTimeIntervalInSeconds = days + minutes + seconds;
+      // job.schedule(event.start.getTime() + runTimeIntervalInSeconds);
     }
   }
 }
