@@ -1,6 +1,8 @@
 'use strict';
 
+const chalk = require('chalk');
+
 module.exports = function() {
   console.log(`
-    your room is ready... [date: ${new Date()}]`);
+    ${chalk.blue.bold('your room is ready...')} [date: ${new Date()}]`);
 };

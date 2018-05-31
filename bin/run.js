@@ -21,13 +21,12 @@ server.listen(3030);
 server.on('listening', function() {
   console.log(`
     JOLT-scheduler is listening on ${server.address().port} in ${service.get('env')} mode.
-    Go to the code and change the ${chalk.bgCyanBright.bold('interval')} settings on the
-    ${chalk.bgCyanBright.bold('event')} object in ${chalk.bold('bin/run.js')}.`);
+    Go to ${chalk.bold('public/settings/events.json')} to change ${chalk.cyanBright.underline.bold('event')} settings.`);
 });
 
 function consoleLog(event) {
   console.log(`
-    Event name:  ${event.name}
+    Event name:  ${chalk.cyanBright.underline.bold(event.name)}
     Start date:  ${event.start}
 
     Event interval:

@@ -1,6 +1,8 @@
 'use strict';
 
+const chalk = require('chalk');
+
 module.exports = function() {
   console.log(`
-    sending email... [date: ${new Date()}]`);
+    ${chalk.yellow.bold('sending email...')} [date: ${new Date()}]`);
 };
