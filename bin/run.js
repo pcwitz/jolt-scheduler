@@ -4,32 +4,15 @@ const scheduler = require('../server/scheduler');
 const service = require('../server/service');
 const http = require('http');
 const chalk = require('chalk');
+const events = require('../public/settings/events.json');
 
-
-
-
-
-/* ADD MICROSERVICE ACTIONS AS NEEDED */
-const emailClient = require('../server/services/actions/email');
-// const roomClient = require('../server/services/actions/room');
-// const cacheClient = require('../server/services/actions/cache');
-
-
-/* CHANGE INTERVAL SETTINGS AS NEEDED */
-const event = {
-  name: 'registeruser',
-  interval: {days: 0, hours: 0, minutes: 0, seconds: 1},
-  action: emailClient.send
-};
-
-var eventService = require('../server/services/events/' + event.name);
-eventService(event, scheduler.scheduleEvent);
-
-
-
-
-
-
+/* CHANGE EVENT SETTINGS IN public/settings/events.json AS NEEDED */
+events.forEach(function(event) {
+  var eventService = require('../server/services/events/' + event.name);
+  event.action = require('../server/services/actions/' + event.action);
+  eventService(event, scheduler.scheduleEvent);
+  consoleLog(event);
+});
 
 // server stuff...
 const server = http.createServer(service);
@@ -39,8 +22,11 @@ server.on('listening', function() {
   console.log(`
     JOLT-scheduler is listening on ${server.address().port} in ${service.get('env')} mode.
     Go to the code and change the ${chalk.bgCyanBright.bold('interval')} settings on the
-    ${chalk.bgCyanBright.bold('event')} object in ${chalk.bold('bin/run.js')}.
+    ${chalk.bgCyanBright.bold('event')} object in ${chalk.bold('bin/run.js')}.`);
+});
 
+function consoleLog(event) {
+  console.log(`
     Event name:  ${event.name}
     Start date:  ${event.start}
 
@@ -51,4 +37,4 @@ server.on('listening', function() {
       second(s): ${event.interval.seconds}
 
     Recurring: ${event.recurring}`);
-});
+}

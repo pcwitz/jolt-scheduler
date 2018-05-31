@@ -1,12 +1,12 @@
 'use strict';
 
+var addTimeForFutureEvent = 8000; // 432000 is five days
+
 module.exports = function(event, cb) {
-  if (event.name !== 'reserveroom') {
+  if (event.name !== 'reserveRoom') {
     return cb(new Error(`Service unavailable. Expected a room reservation event and received request for ${event.name}`));
   } else {
-    event.start = new Date(Date.now() + 86400); // date in the future from client
-    event.recurring = false;
-    event.interval.fix = 'before';
+    event.start = new Date(Date.now() + addTimeForFutureEvent);
     return cb(null, event);
   }
 };

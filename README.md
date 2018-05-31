@@ -4,16 +4,16 @@ Use Jolt-Scheduler to link an `event` with an `action` with an adjustable time
 `interval` between. Both the `event` and the `action` are your choice, only the
 `event` must contain:
 
-1. an event `date`
+1. an event `start` date
 2. whether it is `recurring`
-3. the subsequent `action`
-4. and whether the `action` occurs before or after the event `date`
+3. the `interval` of time between `event` and `action`
+4. and whether the `action` is `fix`ed `before` or `after` the event `start` date
+5. the subsequent `action`
 
-Adjust the `interval` of the `event` (options: days, hour, minutes, seconds) in
-`bin/run.js`
+Adjust the `event` properties in `public/settings/events.json`.
 
 This project "mocks-up" the `event` and `action` as other microservices and the
-actions are logged in the console.
+actions are logged to the console.
 
 ## Table of Contents
 

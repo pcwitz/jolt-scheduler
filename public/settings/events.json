@@ -1,0 +1,20 @@
+[
+  {
+    "name":"registerUser",
+    "interval":{"days": 2, "hours": 0, "minutes": 0, "seconds": 0, "fix":"after"},
+    "recurring":false,
+    "action":"emailClient"
+  },
+  {
+    "name":"showCache",
+    "interval":{"days": 0, "hours": 0, "minutes": 0, "seconds": 4, "fix":"after"},
+    "recurring":true,
+    "action":"resetCache"
+  },
+  {
+    "name":"reserveRoom",
+    "interval":{"days": 0, "hours": 0, "minutes": 0, "seconds": 1, "fix":"before"},
+    "recurring":false,
+    "action":"sendRoomReadyNotification"
+  }
+]

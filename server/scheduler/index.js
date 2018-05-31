@@ -1,46 +1,27 @@
 'use strict';
 
-// const schedule = require('node-schedule');
-// const Job = require('./job');
 const constants = require('./config/constants.json');
 
-function createRecurringRule(interval) {
+function intervalToMilliseconds(interval) {
 
-  // var rule = new schedule.RecurrenceRule();
   var seconds = 0;
   if (interval.days) {
-    seconds = seconds + interval.hours * constants.time.SECONDS_IN_DAY;
-
-    // var hoursOfDay   = interval.hours/constants.time.HOURS_IN_DAY;
-    // var minutesOfDay = interval.minutes/constants.time.MINUTES_IN_DAY;
-    // var secondsOfDay = interval.seconds/constants.time.SECONDS_IN_DAY;
-    // var daysInterval = interval.days + hoursOfDay + minutesOfDay + secondsOfDay;
-    // rule.dayOfWeek = [new schedule.Range(0, 6, Math.round(daysInterval))];
-
+    seconds += interval.days * constants.time.SECONDS_IN_DAY;
   } if (interval.hours) {
-    seconds = seconds + interval.hours * constants.time.SECONDS_IN_HOUR;
-
-    // var minutesOfHour = interval.minutes/constants.time.MINUTES_IN_HOUR;
-    // var secondsOfHour = interval.seconds/constants.time.SECONDS_IN_HOUR;
-    // var hoursInterval = interval.hours + minutesOfHour + secondsOfHour;
-    // rule.hour = [new schedule.Range(0, 23, Math.round(hoursInterval))];
-
+    seconds += interval.hours * constants.time.SECONDS_IN_HOUR;
   } if (interval.minutes) {
-    seconds = seconds + interval.minutes * constants.time.SECONDS_IN_MINUTE;
-
-
-    // var secondsOfMinute = interval.seconds/constants.time.SECONDS_IN_MINUTE;
-    // var minutesInterval = interval.minutes + secondsOfMinute;
-    // rule.minute = [new schedule.Range(0, 59, Math.round(minutesInterval))];
-
+    seconds += interval.minutes * constants.time.SECONDS_IN_MINUTE;
   } if (interval.seconds) {
-    seconds = seconds + interval.seconds;
-
-    // rule.second = [new schedule.Range(0, 59, Math.round(interval.seconds))];
-
+    seconds += interval.seconds;
   }
   return seconds * constants.time.MILLISECONDS_IN_SECOND;
-  // return rule;
+}
+
+function getMillisecondDifferenceBetweenNowAndFutureAction(eventStartDate, intervalInMilliseconds) {
+  var millisecondsTillNow = Date.now();
+  var millisecondsTillEvent  = eventStartDate.getTime();
+  var millisecondsTillEventFromNow = millisecondsTillEvent - millisecondsTillNow;
+  return millisecondsTillEventFromNow - intervalInMilliseconds;
 }
 
 function scheduleEvent(err, event) {
@@ -48,24 +29,15 @@ function scheduleEvent(err, event) {
   if (err) {
     console.error(err);
   } else {
-    // var job = Job.init(event);
-    var seconds = createRecurringRule(event.interval);
+    var intervalInMilliseconds = intervalToMilliseconds(event.interval);
+    if (event.interval.fix === 'before') {
+      // difference of seconds between now and future action
+      intervalInMilliseconds = getMillisecondDifferenceBetweenNowAndFutureAction(event.start, intervalInMilliseconds);
+    }
     if (event.recurring) {
-
-
-      setInterval(event.action, seconds, event.start);
-
-      // var rule = createRecurringRule(event.interval);
-      // job.schedule(rule);
+      setInterval(event.action, intervalInMilliseconds);
     } else {
-
-      setTimeout(event.action, seconds, event.start);
-
-      // const days = event.interval.days ? event.interval.days * constants.time.SECONDS_IN_DAY : 0;
-      // const minutes = event.interval.minutes ? event.interval.minutes * constants.time.SECONDS_IN_MINUTE : 0;
-      // const seconds = event.interval.seconds ? event.interval.seconds * constants.time.MILLISECONDS_IN_SECOND : 0;
-      // const runTimeIntervalInSeconds = days + minutes + seconds;
-      // job.schedule(event.start.getTime() + runTimeIntervalInSeconds);
+      setTimeout(event.action, intervalInMilliseconds);
     }
   }
 }
@@ -73,27 +45,3 @@ function scheduleEvent(err, event) {
 module.exports = {
   scheduleEvent: scheduleEvent
 };
-
-
-// second (0-59)
-// minute (0-59)
-// hour (0-23)
-// date (1-31)
-// month (0-11)
-// year
-// dayOfWeek (0-6) Starting with Sunday
-
-// Job {
-//   job: undefined,
-//   callback: false,
-//   name: '<Anonymous Job 1>',
-//   trackInvocation: [Function],
-//   stopTrackingInvocation: [Function],
-//   triggeredJobs: [Function],
-//   setTriggeredJobs: [Function],
-//   cancel: [Function],
-//   cancelNext: [Function],
-//   reschedule: [Function],
-//   nextInvocation: [Function],
-//   pendingInvocations: [Function]
-// }
